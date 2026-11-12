@@ -1,37 +1,48 @@
-import { useState } from "react"
-
+import { useState } from "react";
 
 function Input({ onAddExpense }) {
-    const [inputValue, setInputValue] = useState('');
-    const [amountValue, setAmountValue] = useState('');
+    const [inputValue, setInputValue] = useState("");
+    const [amountValue, setAmountValue] = useState("");
 
-    const handleSubmit = (event) =>{
+    const handleSubmit = (event) => {
         event.preventDefault();
 
-        if(inputValue.trim() === "" || amountValue === "" || Number(amountValue) <= 0) return;
-        onAddExpense({name: inputValue, amount: Number(amountValue)});
+        if (inputValue.trim() === "" || amountValue === "" || Number(amountValue) <= 0) return;
+
+        onAddExpense({ name: inputValue, amount: Number(amountValue) });
 
         setInputValue("");
         setAmountValue("");
-    }
+    };
 
-    
-    return(
-        <>
-            <form onSubmit={handleSubmit}>
-                <p>Input expense name:</p>
-                <input className="expenseName" type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)}/>
+    return (
+        <form className="expense-form" onSubmit={handleSubmit}>
+            <div className="field grow">
+                <label htmlFor="expense-name">What for</label>
+                <input
+                    id="expense-name"
+                    type="text"
+                    placeholder="Rent, airtime, lunch"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                />
+            </div>
 
-                <p>input expense amount:</p>
-                <input className="expenseAmount" type="number" value={amountValue} onChange={(e) => setAmountValue(e.target.value)} />
-                <div>
-                    <button type="submit">Submit</button>
-                </div>
+            <div className="field">
+                <label htmlFor="expense-amount">Amount (Ksh)</label>
+                <input
+                    id="expense-amount"
+                    type="number"
+                    min="0"
+                    placeholder="500"
+                    value={amountValue}
+                    onChange={(e) => setAmountValue(e.target.value)}
+                />
+            </div>
 
-                
-            </form>
-        </>
-    )
+            <button className="btn" type="submit">Add expense</button>
+        </form>
+    );
 }
 
-export default Input
+export default Input;
