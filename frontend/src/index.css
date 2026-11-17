@@ -1,9 +1,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Jost:wght@400;500;600;700&display=swap');
 
-/* =================================
-   BANANA - DESIGN SYSTEM
-================================= */
+   /* BANANA - DESIGN SYSTEM */
 
 :root {
   --cream: #F8F5E9;
@@ -19,9 +17,7 @@
   --body-font: 'Jost', sans-serif;
 }
 
-/* =================================
-   RESET
-================================= */
+   /* RESET */
 
 *, 
 *::before, 
@@ -45,9 +41,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* =================================
-   MAIN PAGE
-================================= */
+   /* MAIN PAGE */
 
 .app {
   width: min(100% - 40px, 680px);
@@ -55,9 +49,7 @@ body {
   padding: 65px 0 100px;
 }
 
-/* =================================
-   BRANDING
-================================= */
+   /* BRANDING */
 
 .wordmark {
   font-family: var(--heading-font);
@@ -76,9 +68,7 @@ body {
   font-weight: 500;
 }
 
-/* =================================
-   NOTIFICATIONS
-================================= */
+   /* NOTIFICATIONS */
 
 .notice {
   margin-bottom: 26px;
@@ -90,9 +80,9 @@ body {
   font-size: 0.95rem;
 }
 
-/* =================================
-   EXPENSE FORM
-================================= */
+
+   /* EXPENSE FORM */
+
 
 .expense-form {
   display: flex;
@@ -148,9 +138,9 @@ body {
   box-shadow: 0 0 0 4px rgba(38, 61, 43, 0.08);
 }
 
-/* =================================
-   BUTTONS
-================================= */
+
+   /* BUTTONS */
+
 
 .btn {
   padding: 13px 25px;
@@ -196,9 +186,9 @@ body {
   color: #B85F35;
 }
 
-/* =================================
-   FOCUS ACCESSIBILITY
-================================= */
+
+   /* FOCUS ACCESSIBILITY */
+
 
 .btn:focus-visible,
 .delete:focus-visible {
@@ -206,9 +196,9 @@ body {
   outline-offset: 3px;
 }
 
-/* =================================
-   EXPENSE LIST
-================================= */
+
+   /* EXPENSE LIST */
+
 
 .expense-list {
   display: flex;
@@ -263,9 +253,9 @@ body {
   text-align: center;
 }
 
-/* =================================
-   TOTAL CARD
-================================= */
+
+   /* TOTAL CARD */
+
 
 .total {
   display: flex;
@@ -295,9 +285,9 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* =================================
-   RESPONSIVE DESIGN
-================================= */
+
+   /* RESPONSIVE DESIGN */
+
 
 @media (max-width: 480px) {
   .app {
@@ -332,9 +322,9 @@ body {
   }
 }
 
-/* =================================
-   REDUCED MOTION
-================================= */
+
+   /* REDUCED MOTION */
+
 
 @media (prefers-reduced-motion: reduce) {
   *,
