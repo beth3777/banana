@@ -47,6 +47,23 @@ function App() {
         }
     }
 
+    async function updateExpense(id, changes) {
+    try {
+        const response = await fetch(`${API}/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(changes)
+        });
+        if (!response.ok) throw new Error("Update failed");
+        const updated = await response.json();
+        setExpenses(expenses.map((expense) => (expense.id === id ? updated : expense)));
+        return true;
+    } catch (err) {
+        console.log("Couldn't update expense", err);
+        return false;
+    }
+}
+
     return (
         <main className="app">
             <header>
@@ -61,8 +78,11 @@ function App() {
             )}
 
             <Input onAddExpense={addExpense} />
-            <ExpenseList expenses={expenses} onDeleteExpense={deleteExpense} />
-        </main>
+            <ExpenseList
+                expenses={expenses}
+                onDeleteExpense={deleteExpense}
+                onUpdateExpense={updateExpense}
+            />        </main>
     );
 }
 

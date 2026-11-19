@@ -44,44 +44,6 @@ seed_db()
 app = Flask(__name__)
 CORS(app)
 
-expenses =[
-  {
-    "id": 1,
-    "name": "Rent",
-    "amount": 25000
-  },
-  {
-    "id": 2,
-    "name": "Groceries",
-    "amount": 8500
-  },
-  {
-    "id": 3,
-    "name": "Electricity (Kenya Power)",
-    "amount": 3200
-  },
-  {
-    "id": 4,
-    "name": "Water Bill",
-    "amount": 800
-  },
-  {
-    "id": 5,
-    "name": "Internet (WiFi)",
-    "amount": 3000
-  },
-  {
-    "id": 6,
-    "name": "Transport / Fuel",
-    "amount": 6500
-  },
-  {
-    "id": 7,
-    "name": "Airtime and Data",
-    "amount": 1500
-  }
-
-]
 
 @app.route("/api/expenses", methods=["GET"])
 def get_expenses():
@@ -101,25 +63,119 @@ def add_expense():
     if not isinstance(amount, (int, float)) or amount <=0:
         return jsonify({"error": "amount must be a number greater than 0"}), 400
 
-    new_expense = {
-        "id":max([ex["id"] for ex in expenses], default= 0)+1,
+    conn = get_db() 
+    cursor = conn.execute("INSERT INTO expense (name, amount) VALUES (?,?)", (name, amount))
+    conn.commit()
+
+    new_expense_id = cursor.lastrowid
+    conn.close()
+
+    return jsonify({
+        "id": new_expense_id,
         "name": name,
         "amount": amount
-    }
-    expenses.append(new_expense)
-    return jsonify(new_expense), 201
+        }), 201
+    
 
-@app.route("/api/expenses/<int:expense_id>", methods = ["PATCH"])
+    # new_expense = {
+    #     "id":max([ex["id"] for ex in expenses], default= 0)+1,
+    #     "name": name,
+    #     "amount": amount
+    # }
+    # expenses.append(new_expense)
+    # return jsonify(new_expense), 201
+
+@app.route("/api/expenses/<int:expense_id>", methods=["PATCH"])
 def update_expense(expense_id):
     data = request.get_json(silent=True) or {}
-    for expense in expenses:
-        if expense ["id"] == expense_id:
-            if "name" in data:
-                expense["name"] = data["name"]
-            if "amount" in data:
-                expense["amount"] = data["amount"]
-            return jsonify(expense)
-    return jsonify({"error": "Expense not found"}), 404
+
+    fields = []
+    values = []
+
+    if "name" in data:
+        name = str(data["name"]).strip()
+        if name == "":
+            return jsonify({"error": "Name can't be empty"}), 400
+        fields.append("name = ?")
+        values.append(name)
+
+    if "amount" in data:
+        amount = data["amount"]
+        if not isinstance(amount, (int, float)) or amount <= 0:
+            return jsonify({"error": "Amount must be a number greater than 0"}), 400
+        fields.append("amount = ?")
+        values.append(amount)
+
+    if "category" in data:
+        fields.append("category = ?")
+        values.append(data["category"])
+
+    if not fields:
+        return jsonify({"error": "No valid fields provided for update"}), 400
+
+    conn = get_db()
+    existing = conn.execute("SELECT * FROM expense WHERE id = ?", (expense_id,)).fetchone()
+    if existing is None:
+        conn.close()
+        return jsonify({"error": "Expense not found"}), 404
+
+    values.append(expense_id)
+    query = f"UPDATE expense SET {', '.join(fields)} WHERE id = ?"
+    conn.execute(query, values)
+    conn.commit()
+
+    updated = conn.execute("SELECT * FROM expense WHERE id = ?", (expense_id,)).fetchone()
+    conn.close()
+
+    return jsonify(dict(updated)), 200
+# @app.route("/api/expenses/<int:expense_id>", methods = ["PATCH"])
+# def update_expense(expense_id):
+#     data = request.get_json(silent=True) or {}
+
+#     if not data:
+#         return jsonify({"error": "Expense not found"}), 404
+
+#     conn = get_db()
+
+#     # check if te expense exists
+#     existing = conn.execute ("SELECT * FROM expense WHERE id = ?", (expense_id,)). fetchone()
+#     if not existing:
+#         conn.close()
+#         return jsonify({"error": "Expense not found"}), 404
+
+#     # dynamically build the SQL based on what field were sent
+#     fields = []
+#     values = []
+
+#     # check what allowed columns  are present in the incoming JSON
+#     for key in ["name", "amount", "category"]:
+#         if key in data:
+#             fields. append(f"{key} = ?")
+#             values.append(data[key])
+
+#     if not fields : 
+#         conn.close()
+#         return jsonify({"error": "No valid fields provided for update"}), 400
+    
+#     values.append(expense_id)
+#     query = f"UPDATE expenses SET {', '.join(fields)} WHERE id = ?"
+
+#     conn.execute(query, values)
+#     conn.commit()
+
+#     update_row = conn.execute("SELECT * FROM expense WHERE id = ?", (expense_id,)).fetchone()
+#     conn.close()
+
+#     return jsonify(dict(update_row)), 200
+    
+#     # for expense in expenses:
+#     #     if expense ["id"] == expense_id:
+#     #         if "name" in data:
+#     #             expense["name"] = data["name"]
+#     #         if "amount" in data:
+#     #             expense["amount"] = data["amount"]
+#     #         return jsonify(expense)
+    
 
 
 @app.route("/api/expenses/<int:expense_id>", methods= ["DELETE"])
